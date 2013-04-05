@@ -1,7 +1,9 @@
+%define zrelease 3
+
 Summary: Userspace component of KVM
 Name: qemu-kvm
 Version: 0.12.1.2
-Release: 2.113%{?dist}
+Release: 2.113%{?dist}.%{zrelease}
 # Epoch because we pushed a qemu-1.0 package
 Epoch: 2
 License: GPLv2+ and LGPLv2+ and BSD
@@ -1410,6 +1412,16 @@ Patch1691: kvm-vhost-Fix-size-of-dirty-log-sync-on-resize.patch
 Patch1692: kvm-qemu-img-rebase-Open-new-backing-file-read-only.patch
 # For bz#623903 - query-balloon commmand didn't return on pasued guest cause virt-manger hang
 Patch1693: kvm-disable-guest-provided-stats-on-info-ballon-monitor-.patch
+# For bz#633963 - Replace virtio-net TX timer mitigation with bottom half handler
+Patch1694: kvm-virtio-net-Make-tx_timer-timeout-configurable.patch
+# For bz#633963 - Replace virtio-net TX timer mitigation with bottom half handler
+Patch1695: kvm-virtio-net-Limit-number-of-packets-sent-per-TX-flush.patch
+# For bz#633963 - Replace virtio-net TX timer mitigation with bottom half handler
+Patch1696: kvm-virtio-net-Rename-tx_timer_active-to-tx_waiting.patch
+# For bz#633963 - Replace virtio-net TX timer mitigation with bottom half handler
+Patch1697: kvm-virtio-net-Introduce-a-new-bottom-half-packet-TX.patch
+# For bz#641835 - Can not commit copy-on-write image's data to raw backing-image
+Patch1698: kvm-block-Fix-image-re-open-in-bdrv_commit.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: SDL-devel zlib-devel which texi2html gnutls-devel cyrus-sasl-devel
@@ -2165,6 +2177,11 @@ such as kvm_stat.
 %patch1691 -p1
 %patch1692 -p1
 %patch1693 -p1
+%patch1694 -p1
+%patch1695 -p1
+%patch1696 -p1
+%patch1697 -p1
+%patch1698 -p1
 
 %build
 # --build-id option is used fedora 8 onwards for giving info to the debug packages.
@@ -2360,6 +2377,24 @@ fi
 %{_mandir}/man1/qemu-img.1*
 
 %changelog
+* Thu Oct 14 2010 Eduardo Habkost <ehabkost@redhat.com> - qemu-kvm-0.12.1.2-2.113.el6_0.3
+- ksmtuned: committed_memory of 0 qemus [bz#634249]
+- Resolves: bz#634249
+  (incorrect committed memory on idle host)
+
+* Wed Oct 13 2010 Eduardo Habkost <ehabkost@redhat.com> - qemu-kvm-0.12.1.2-2.113.el6_0.2
+- kvm-block-Fix-image-re-open-in-bdrv_commit.patch [bz#641835]
+- Resolves: bz#641835
+  (Can not commit copy-on-write image's data to raw backing-image)
+
+* Tue Sep 14 2010 Eduardo Habkost <ehabkost@redhat.com> - qemu-kvm-0.12.1.2-2.113.el6_0.1
+- kvm-virtio-net-Make-tx_timer-timeout-configurable.patch [bz#633963]
+- kvm-virtio-net-Limit-number-of-packets-sent-per-TX-flush.patch [bz#633963]
+- kvm-virtio-net-Rename-tx_timer_active-to-tx_waiting.patch [bz#633963]
+- kvm-virtio-net-Introduce-a-new-bottom-half-packet-TX.patch [bz#633963]
+- Resolves: bz#633963
+  (Replace virtio-net TX timer mitigation with bottom half handler)
+
 * Tue Aug 24 2010 Eduardo Habkost <ehabkost@redhat.com> - qemu-kvm-0.12.1.2-2.113.el6
 - kvm-disable-guest-provided-stats-on-info-ballon-monitor-.patch [bz#623903]
 - Resolves: bz#623903
